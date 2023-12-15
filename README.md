@@ -1,4 +1,4 @@
-# System Design Generator
+# SystemDesignJam
 
 ## Development
 

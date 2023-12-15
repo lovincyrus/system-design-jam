@@ -1,6 +1,6 @@
 import { PluginMessageType } from '../types'
 
-figma.showUI(__html__, { themeColors: true, height: 300 })
+figma.showUI(__html__, { themeColors: true, height: 260 })
 figma.loadFontAsync({ family: 'Inter', style: 'Medium' })
 
 function createShapesAndConnectors(count: number): void {
@@ -17,8 +17,6 @@ function createShapesAndConnectors(count: number): void {
 
   figma.currentPage.selection = nodes
   figma.viewport.scrollAndZoomIntoView(nodes)
-
-  figma.closePlugin()
 }
 
 function createSquareShape(characters: string): ShapeWithTextNode {
@@ -47,25 +45,35 @@ function createConnectors(nodes: SceneNode[]): void {
 }
 
 function createStickies(prompt: string): void {
-  const sticky = figma.createSticky()
-  sticky.text.characters = prompt
-}
+  const dissectedSections = prompt.split('\n\n')
 
-function notify(message: string): void {
-  figma.notify(message, { timeout: 2000 })
+  const stickies: StickyNode[] = []
+
+  dissectedSections.forEach((section, index) => {
+    const sticky = figma.createSticky()
+    sticky.x = index * (sticky.width + 200)
+    sticky.isWideWidth = true
+    sticky.text.characters = section.trim()
+    figma.currentPage.appendChild(sticky)
+    stickies.push(sticky)
+  })
+
+  figma.currentPage.selection = stickies
+  figma.viewport.scrollAndZoomIntoView(stickies)
 }
 
 figma.ui.onmessage = (msg) => {
-  switch (msg.type) {
+  const { type, count, prompt, message } = msg
+
+  switch (type) {
     case PluginMessageType.CreateShapes:
-      createShapesAndConnectors(msg.count)
+      createShapesAndConnectors(count)
       break
     case PluginMessageType.SubmitPrompt:
-      notify(`Creating sticky ${msg.prompt}...`)
-      createStickies(msg.prompt)
+      createStickies(prompt)
       break
     case PluginMessageType.Notify:
-      notify(msg.message)
+      figma.notify(message)
       break
     default:
       break

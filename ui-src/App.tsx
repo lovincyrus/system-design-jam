@@ -3,7 +3,20 @@ import Logo from './Logo'
 import './App.css'
 import { PluginMessageType } from '../types'
 
-const MODEL = 'gpt-4-0613'
+// See: https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
+const MODEL = 'gpt-4'
+
+function notify(message: string): void {
+  parent.postMessage(
+    {
+      pluginMessage: {
+        type: PluginMessageType.Notify,
+        message,
+      },
+    },
+    '*',
+  )
+}
 
 async function submitPromptToOpenAI(prompt: string): Promise<void> {
   const apiKey = import.meta.env.VITE_OPENAI_API_KEY as string
@@ -20,7 +33,16 @@ async function submitPromptToOpenAI(prompt: string): Promise<void> {
         model: MODEL,
         temperature: 0.5,
         messages: [
-          { role: 'system', content: 'You are a helpful assistant.' },
+          {
+            role: 'system',
+            content: `
+              You are a helpful assistant that specializes in System Design interview. You will be asked to design a system that can do the following:
+              - ${prompt}
+
+              createStickies:
+              ONLY returns functional, non-function requirements, assumptions, and estimations
+              `,
+          },
           { role: 'user', content: prompt },
         ],
       }),
@@ -39,15 +61,7 @@ async function submitPromptToOpenAI(prompt: string): Promise<void> {
     )
   } catch (e) {
     const error = e as Error
-    parent.postMessage(
-      {
-        pluginMessage: {
-          type: PluginMessageType.Notify,
-          message: error.message,
-        },
-      },
-      '*',
-    )
+    notify(error.message)
 
     parent.postMessage(
       {
@@ -60,6 +74,7 @@ async function submitPromptToOpenAI(prompt: string): Promise<void> {
 
 function App() {
   const [prompt, setPrompt] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const onCreateShapes = () => {
@@ -73,8 +88,11 @@ function App() {
     )
   }
 
-  const onSubmitPrompt = () => {
+  const onSubmit = () => {
+    // onCreateShapes()
+    setIsLoading(true)
     submitPromptToOpenAI(prompt)
+    setIsLoading(false)
   }
 
   const onCancel = () => {
@@ -92,12 +110,19 @@ function App() {
         <Logo />
         <h3>System Design Generator</h3>
       </header>
-      <section>
+      {/* <section>
         <label htmlFor="input" className="sr-only">
           Rectangle Count
         </label>
-        <input id="input" type="number" min="0" ref={inputRef} />
-      </section>
+        <input
+          id="input"
+          type="number"
+          min="0"
+          ref={inputRef}
+          defaultValue={4}
+          placeholder="Enter number of rectangles"
+        />
+      </section> */}
       <section>
         <label htmlFor="prompt" className="sr-only">
           AI Prompt
@@ -111,8 +136,8 @@ function App() {
         />
       </section>
       <footer>
-        <button className="brand" onClick={onSubmitPrompt}>
-          Create
+        <button className="brand" onClick={onSubmit} disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Generate'}
         </button>
         <button onClick={onCancel}>Cancel</button>
       </footer>
