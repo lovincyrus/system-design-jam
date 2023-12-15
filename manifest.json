@@ -2,11 +2,17 @@
   "name": "System Design Generator",
   "id": "1317277434248144100",
   "api": "1.0.0",
-  "editorType": ["figma", "figjam"],
+  "editorType": [
+    "figma",
+    "figjam"
+  ],
   "permissions": [],
   "main": "dist/code.js",
   "ui": "dist/index.html",
   "networkAccess": {
-    "allowedDomains": ["none"]
+    "allowedDomains": [
+      "*"
+    ],
+    "reasoning": "TESTING"
   }
 }
