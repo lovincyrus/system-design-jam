@@ -74,7 +74,6 @@ async function submitPromptToOpenAI(prompt: string): Promise<void> {
 
 function App() {
   const [prompt, setPrompt] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const onCreateShapes = () => {
@@ -90,9 +89,7 @@ function App() {
 
   const onSubmit = () => {
     // onCreateShapes()
-    setIsLoading(true)
     submitPromptToOpenAI(prompt)
-    setIsLoading(false)
   }
 
   const onCancel = () => {
@@ -108,7 +105,7 @@ function App() {
     <main>
       <header>
         <Logo />
-        <h3>System Design Generator</h3>
+        <h3>SystemDesignJam</h3>
       </header>
       {/* <section>
         <label htmlFor="input" className="sr-only">
@@ -130,16 +127,16 @@ function App() {
         <input
           id="prompt"
           type="text"
-          placeholder="Enter prompt"
+          placeholder="Design a system..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
         />
       </section>
       <footer>
-        <button className="brand" onClick={onSubmit} disabled={isLoading}>
-          {isLoading ? 'Loading...' : 'Generate'}
+        <button className="brand" onClick={onSubmit}>
+          Generate
         </button>
-        <button onClick={onCancel}>Cancel</button>
+        {/* <button onClick={onCancel}>Cancel</button> */}
       </footer>
     </main>
   )

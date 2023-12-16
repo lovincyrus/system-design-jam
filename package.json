@@ -1,7 +1,7 @@
 {
-  "name": "system-design-generator",
+  "name": "system-design-jam",
   "version": "1.0.0",
-  "description": "System Design Generator",
+  "description": "System Design Jam",
   "scripts": {
     "test": "npm run tsc && npm run build",
     "format": "prettier --write .",
