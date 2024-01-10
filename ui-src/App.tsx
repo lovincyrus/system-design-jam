@@ -39,8 +39,10 @@ async function submitPromptToOpenAI(prompt: string): Promise<void> {
               You are a helpful assistant that specializes in System Design interview. You will be asked to design a system that can do the following:
               - ${prompt}
 
-              createStickies:
-              ONLY returns functional, non-function requirements, assumptions, and estimations
+              Tasks:
+              - ONLY returns functional, non-function requirements, assumptions, and estimations
+              - ONLY returns high-level design and data schema of the system. Use snake_case for naming. Include types and relationships
+              - ONLY returns the UML diagram of the architecture. Always start from the client and work your way to the database. Be as technical and in-depth as possible.
               `,
           },
           { role: 'user', content: prompt },
@@ -76,16 +78,16 @@ function App() {
   const [prompt, setPrompt] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const onCreateShapes = () => {
-    const count = Number(inputRef.current?.value || 0)
+  // const onCreateShapes = () => {
+  //   const count = Number(inputRef.current?.value || 0)
 
-    parent.postMessage(
-      {
-        pluginMessage: { type: PluginMessageType.CreateShapes, count },
-      },
-      '*',
-    )
-  }
+  //   parent.postMessage(
+  //     {
+  //       pluginMessage: { type: PluginMessageType.CreateShapes, count },
+  //     },
+  //     '*',
+  //   )
+  // }
 
   const onSubmit = () => {
     // onCreateShapes()
@@ -127,7 +129,7 @@ function App() {
         <input
           id="prompt"
           type="text"
-          placeholder="Design a system..."
+          placeholder="Design..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
         />
