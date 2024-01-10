@@ -7,6 +7,7 @@
 1. Clone this repo
 2. Open Figma Desktop app
 3. Import the plugin from within the Figma desktop app (`Plugins` > `Development` > `Import plugin from manifest...` > `SystemDesignJam`)
+4. Touch `.env` with `VITE_OPENAI_API_KEY=""` to use the plugin
 
 ## Development
 
